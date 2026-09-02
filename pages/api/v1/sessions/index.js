@@ -1,7 +1,9 @@
 import { createRouter } from "next-connect";
 import controller from "infra/controller.js";
 import authentication from "models/authentication.js";
+import authorization from "models/authorization.js";
 import session from "models/session.js";
+import { ForbiddenError } from "infra/errors.js";
 
 const router = createRouter();
 
@@ -18,6 +20,13 @@ async function postHandler(req, res) {
     userInputValues.email,
     userInputValues.password,
   );
+
+  if (!authorization.can(authenticatedUser, "create:session")) {
+    throw new ForbiddenError({
+      message: "Login not allowed.",
+      action: "Contact the support team if you believe it's an error.",
+    });
+  }
 
   const newSession = await session.create(authenticatedUser.id);
 
