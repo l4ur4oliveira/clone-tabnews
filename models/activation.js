@@ -106,7 +106,7 @@ async function activateUserByUserId(userId) {
 
 async function sendEmailToUser(user, activationToken) {
   await email.send({
-    from: "DevTest <contato@test.com>",
+    from: "Lau Oliveira <contato@curso.oliveilaura.com.br>",
     to: user.email,
     subject: "Activate your registration!",
     text: `${user.username}, click the link below to activate your registration.
