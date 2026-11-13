@@ -1,3 +1,4 @@
+import webServer from "infra/webserver.js";
 import orchestrator from "tests/orchestrator.js";
 
 beforeAll(async () => {
@@ -9,7 +10,7 @@ beforeAll(async () => {
 describe("GET /api/v1/migrations", () => {
   describe("Anonymous user", () => {
     test("Retrieving pending migrations", async () => {
-      const response = await fetch("http://localhost:3000/api/v1/migrations");
+      const response = await fetch(`${webServer.origin}/api/v1/migrations`);
       expect(response.status).toBe(403);
 
       const responseBody = await response.json();
@@ -27,9 +28,9 @@ describe("GET /api/v1/migrations", () => {
     test("Retrieving pending migrations", async () => {
       const createdUser = await orchestrator.createUser();
       const activatedUser = await orchestrator.activateUser(createdUser);
-      const sessionObject = await orchestrator.createSession(activatedUser.id);
+      const sessionObject = await orchestrator.createSession(activatedUser);
 
-      const response = await fetch("http://localhost:3000/api/v1/migrations", {
+      const response = await fetch(`${webServer.origin}/api/v1/migrations`, {
         headers: {
           Cookie: `session_id=${sessionObject.token}`,
         },
@@ -49,15 +50,15 @@ describe("GET /api/v1/migrations", () => {
   });
 
   describe("Privileged user", () => {
-    test("With 'read:migration'", async () => {
+    test("With `read:migration`", async () => {
       const createdUser = await orchestrator.createUser();
       const activatedUser = await orchestrator.activateUser(createdUser);
 
       await orchestrator.addFeaturesToUser(createdUser, ["read:migration"]);
 
-      const sessionObject = await orchestrator.createSession(activatedUser.id);
+      const sessionObject = await orchestrator.createSession(activatedUser);
 
-      const response = await fetch("http://localhost:3000/api/v1/migrations", {
+      const response = await fetch(`${webServer.origin}/api/v1/migrations`, {
         headers: {
           Cookie: `session_id=${sessionObject.token}`,
         },

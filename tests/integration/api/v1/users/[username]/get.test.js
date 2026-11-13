@@ -1,4 +1,5 @@
 import { version as uuidVersion } from "uuid";
+import webServer from "infra/webserver.js";
 import orchestrator from "tests/orchestrator.js";
 
 beforeAll(async () => {
@@ -14,9 +15,7 @@ describe("GET /api/v1/users/[username]", () => {
         username: "TesteGet",
       });
 
-      const response = await fetch(
-        "http://localhost:3000/api/v1/users/TesteGet",
-      );
+      const response = await fetch(`${webServer.origin}/api/v1/users/TesteGet`);
 
       expect(response.status).toBe(200);
 
@@ -39,9 +38,7 @@ describe("GET /api/v1/users/[username]", () => {
         username: "MisMatch",
       });
 
-      const response = await fetch(
-        "http://localhost:3000/api/v1/users/mismatch",
-      );
+      const response = await fetch(`${webServer.origin}/api/v1/users/mismatch`);
 
       expect(response.status).toBe(200);
 
@@ -61,7 +58,7 @@ describe("GET /api/v1/users/[username]", () => {
 
     test("With nonexistent user", async () => {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/nonexistentuser",
+        `${webServer.origin}/api/v1/users/nonexistentuser`,
       );
 
       expect(response.status).toBe(404);

@@ -39,17 +39,18 @@ function onErrorHandler(error, req, res) {
   res.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
-async function setSessionCookie(sessionToken, res) {
+function setSessionCookie(sessionToken, res) {
   const setCookie = cookie.serialize("session_id", sessionToken, {
     path: "/",
     maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
     secure: process.env.NODE_ENV === "production",
     httpOnly: true,
+    sameSite: "lax",
   });
   res.setHeader("Set-Cookie", setCookie);
 }
 
-async function clearSessionCookie(res) {
+function clearSessionCookie(res) {
   const setCookie = cookie.serialize("session_id", "invalid", {
     path: "/",
     maxAge: -1,
